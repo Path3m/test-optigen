@@ -11,51 +11,52 @@ export function optigen(score){
     let pselec = 0.3;
 
     let index = new util.Individual(
-        new util.Permutation((array => {for(let i=0; i<sizeInd; array.push(i++)); return array; })
-        ([])),
+        (array => {for(let i=0; i<sizeInd; array.push(i++)); return array; })
+        ([]),
         util.score
     );
-    let population = util.randPop(nbInd, sizeInd, util.score);
+    let population = util.Population.randPop(nbInd, sizeInd, util.score);
 
     console.log("Initialisation :");
-    util.poplog(population);
+    population.poplog();
 
-    population.sort((i1,i2) => -(i1.score - i2.score));
+    population.sortByScore();
 
     for(let i=0; i<nbGen; i++){
 
         console.log("Generation ",i," population triée :");
-        util.poplog(population);
+        population.poplog();
 
         let nbMeilleurs = Math.ceil(nbInd * pselec);
         console.log("n meilleurs : ",nbMeilleurs);
 
-        let meilleurs = new Array(nbMeilleurs);
-        for(let j=0; j<meilleurs.length; meilleurs[j] = population[j++]);
+        let meilleursInd = new Array(nbMeilleurs);
+        for(let j=0; j<meilleursInd.length; meilleursInd[j] = population.members[j++]);
+        let meilleurs = new util.Population(meilleursInd, population.func);
 
         let nbChildren = nbInd - nbMeilleurs;
         console.log("m enfants : ",nbChildren);
 
-        let newGen = pmx.newGeneration(population, pr, nbChildren);
+        let newGen = population.newGeneration(pr, nbChildren);
 
         console.log("Generation ",i," enfants :");
-        util.poplog(newGen);
+        newGen.poplog();
 
-        util.mutatePop(newGen, pm);
+        newGen.mutatePop(pm);
         console.log("Generation ",i," enfants mutés :");
-        util.poplog(newGen);
+        newGen.poplog();
 
-        newGen.push(...meilleurs);
-        population = newGen.sort((i1,i2) => -(i1.score-i2.score));
+        newGen.concat(meilleurs);
+        population = newGen.sortByScore();
 
-        if(population[0].score === index.score){
+        if(population.members[0].score === index.score){
             console.log("\nMAXIMUM REACH AT GENERATION ",i,"\n");
             i = nbGen + 1;
         }
     }
 
-    console.log("\nDifférence finale : score max : ",index.score,"| score max pop : ",population[0].score,
-        " | différence : ",index.score - population[0].score
+    console.log("\nDifférence finale : score max : ",index.score,"| score max pop : ",population.members[0].score,
+        " | différence : ",index.score - population.members[0].score
     );
 
     return population;
