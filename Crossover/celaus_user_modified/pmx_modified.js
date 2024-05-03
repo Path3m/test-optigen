@@ -66,17 +66,16 @@ export function newGeneration(population, crossPercent, sizeNewGen) { //TODO : c
   
   let nbParents = Math.floor(population.length * crossPercent);
   let newGen = new Array(sizeNewGen);
-  let children = []; let i = 0;
 
   for (let i = 0; i < newGen.length; i++) {
-    let pairOfIndex = util.randomPair(nbParents);
+    let pairOfIndex = util.Permutation.indexPair(nbParents);
 
-    const parent1 = population[pairOfIndex[0]];
-    const parent2 = population[pairOfIndex[1]];
+    let parent1 = population[pairOfIndex[0]];
+    let parent2 = population[pairOfIndex[1]];
 
-    let children = crossover(parent1, parent2);
-    newGen[i]   = children[0];
-    if(i < newGen.length-1) newGen[++i] = children[1]; //TODO : find a better solution
+    let children = crossover(parent1.p, parent2.p);
+    newGen[i]   = new util.Permutation(children[0]);
+    if(i < newGen.length-1) newGen[++i] = new util.Permutation(children[1]); //TODO : find a better solution
   }
 
   return newGen;
