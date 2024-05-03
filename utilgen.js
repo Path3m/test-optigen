@@ -1,5 +1,4 @@
 export class Permutation{
-
     /**
      * Build a permutation from an array
      * @param {Array<any>} array 
@@ -91,10 +90,25 @@ export class Permutation{
 //----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
 export class Individual{
-
+    /**
+     * Build an individual with a permutation and its score computed with a function over a permutation
+     * @param {*} permutation 
+     * @param {*} func 
+     */
     constructor(permutation, func){
         this.genome = permutation;
         this.score  = func(permutation);
+    }
+
+    /**
+     * Execute a mutation over an individual that is a permutation
+     * @param {*} permutation 
+     */
+    mutation(){
+        let factor = Math.random();
+
+        if (factor < 0.9) this.genome.randomSimpleSwap();
+        else this.genome.randomSimpleSwap();
     }
 
 }
@@ -108,9 +122,9 @@ export class Individual{
  * @param {*} sizeInd 
  * @returns 
  */
-export function randPop(sizePop, sizeInd){
+export function randPop(sizePop, sizeInd, func){
     let pop = new Array(sizePop)
-    for(let i=0; i<pop.length; pop[i++] = Permutation.randPermutation(sizeInd));
+    for(let i=0; i<pop.length; pop[i++] = new Individual(Permutation.randPermutation(sizeInd), func));
     return pop;
 }
 
@@ -118,13 +132,15 @@ export function randPop(sizePop, sizeInd){
  * Log a matrix in the console
  * @param {*} array 
  */
-export function matlog(array){
-    array.forEach(current => console.log(current.p, " | ",score(current.p)));
+export function poplog(pop){
+    pop.forEach(current => console.log(current.genome.p, " | ",current.score));
 }
 
 //--------------------------------------------------------------------------
 //SCORE COMPUTING
-export function score(array) {
+export function score(permutation) {
+    let array = permutation.p;
+
     let sum = 0;
     for(let i=0; i<array.length; sum += i*array[i++]);
     return sum;
@@ -132,17 +148,6 @@ export function score(array) {
 
 //--------------------------------------------------------------------------
 //MUTATION
-
-/**
- * Execute a mutation over an individual that is a permutation
- * @param {*} permutation 
- */
-export function mutation(permutation){
-    let factor = Math.random();
-
-    if (factor < 0.9) permutation.randomSimpleSwap();
-    else permutation.randomSimpleSwap();
-}
 
 /**
  * 
@@ -160,7 +165,7 @@ export function mutatePop(population, percentMut){
 
         console.log("l'enfant ",index," est muté.");
 
-        mutation(population[index]);
+        population[index].mutation();
         alreadyMutated[index] = i;
     }
     console.log(alreadyMutated);

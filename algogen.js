@@ -10,20 +10,22 @@ export function optigen(score){
     let pm     = 0.5;
     let pselec = 0.3;
 
-    let index = (array => { 
-        for(let i=0; i<sizeInd; array.push(i++)); return array; 
-    })([]);
-    let population = util.randPop(nbInd, sizeInd);
+    let index = new util.Individual(
+        new util.Permutation((array => {for(let i=0; i<sizeInd; array.push(i++)); return array; })
+        ([])),
+        util.score
+    );
+    let population = util.randPop(nbInd, sizeInd, util.score);
 
     console.log("Initialisation :");
-    util.matlog(population);
+    util.poplog(population);
 
-    population.sort((i1,i2) => -(score(i1.p) - score(i2.p)));
+    population.sort((i1,i2) => -(i1.score - i2.score));
 
     for(let i=0; i<nbGen; i++){
 
         console.log("Generation ",i," population triée :");
-        util.matlog(population);
+        util.poplog(population);
 
         let nbMeilleurs = Math.ceil(nbInd * pselec);
         console.log("n meilleurs : ",nbMeilleurs);
@@ -37,23 +39,23 @@ export function optigen(score){
         let newGen = pmx.newGeneration(population, pr, nbChildren);
 
         console.log("Generation ",i," enfants :");
-        util.matlog(newGen);
+        util.poplog(newGen);
 
         util.mutatePop(newGen, pm);
         console.log("Generation ",i," enfants mutés :");
-        util.matlog(newGen);
+        util.poplog(newGen);
 
         newGen.push(...meilleurs);
-        population = newGen.sort((i1,i2) => -(score(i1.p) - score(i2.p)));
+        population = newGen.sort((i1,i2) => -(i1.score-i2.score));
 
-        if(score(population[0].p) === score(index)){
+        if(population[0].score === index.score){
             console.log("\nMAXIMUM REACH AT GENERATION ",i,"\n");
             i = nbGen + 1;
         }
     }
 
-    console.log("\nDifférence finale : score max : ",score(index),"| score max pop : ",score(population[0].p),
-        " | différence : ",score(index) - score(population[0].p)
+    console.log("\nDifférence finale : score max : ",index.score,"| score max pop : ",population[0].score,
+        " | différence : ",index.score - population[0].score
     );
 
     return population;

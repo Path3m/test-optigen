@@ -6,6 +6,6 @@ console.log("on commence ici *************************************************\n
 
 let popfin = optigen(util.score);
 console.log("\nPopulation Finale :");
-util.matlog(popfin);
+util.poplog(popfin);
 
 console.log("on termine là ***************************************************");
