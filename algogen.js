@@ -11,7 +11,7 @@ export function optigen(score, dimensions, influenceFactors){
     let mutation     = influenceFactors.mutation;
     let selection    = influenceFactors.selection;
 
-    let index = new Individual( Permutation.index(sizeInd), score );
+    let index = new Individual(Permutation.index(sizeInd), score);
     let population = Population.randPop(sizeGen, sizeInd, score);
 
     console.log("Initialisation :");
@@ -24,11 +24,13 @@ export function optigen(score, dimensions, influenceFactors){
         console.log("Generation ",i," population triée :");
         population.poplog();
 
+        //Selecting the best individuals
         let nbMeilleurs = Math.ceil(sizeGen * selection);
         console.log("n meilleurs : ",nbMeilleurs);
         let meilleurs = population.selectMeilleurs(nbMeilleurs);
         meilleurs.poplog();
 
+        //Creating children by crossover
         let nbChildren = sizeGen - nbMeilleurs;
         console.log("m enfants : ",nbChildren);
 
@@ -37,10 +39,12 @@ export function optigen(score, dimensions, influenceFactors){
         console.log("Generation ",i," enfants :");
         newGen.poplog();
 
+        //Mutating children
         newGen.mutatePop(mutation);
         console.log("Generation ",i," enfants mutés :");
         newGen.poplog();
 
+        //Finalize new generation
         population = (newGen.push(meilleurs)).sortByScore();
 
         if(population.members[0].score === index.score){
