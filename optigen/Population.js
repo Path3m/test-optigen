@@ -60,7 +60,8 @@ export class Population{
         if(!this.orderedByScore) this.sortByScore();
 
         let pair = Permutation.indexPair(parentRange);
-        
+        if(pair[0] == pair[1] || pair[0] > parentRange || pair[1] > parentRange) throw new Error("Invalid parents.");
+
         let parent1  = this.members[pair[0]];
         let parent2  = this.members[pair[1]];
         return parent1.crossover(parent2);
