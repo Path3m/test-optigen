@@ -1,5 +1,8 @@
 import * as util from "./utilgen.js";
-import * as pmx from "./Crossover/celaus_user_modified/pmx_modified.js";
+
+import { Permutation } from "./Permutation.js";
+import { Individual } from "./Individuals.js";
+import { Population } from "./Population.js";
 
 export function optigen(score){
     let nbGen   = 200;
@@ -10,12 +13,8 @@ export function optigen(score){
     let pm     = 0.5;
     let pselec = 0.3;
 
-    let index = new util.Individual(
-        (array => {for(let i=0; i<sizeInd; array.push(i++)); return array; })
-        ([]),
-        util.score
-    );
-    let population = util.Population.randPop(nbInd, sizeInd, util.score);
+    let index = new Individual( Permutation.index(sizeInd), score );
+    let population = Population.randPop(nbInd, sizeInd, score);
 
     console.log("Initialisation :");
     population.poplog();
@@ -32,7 +31,7 @@ export function optigen(score){
 
         let meilleursInd = new Array(nbMeilleurs);
         for(let j=0; j<meilleursInd.length; meilleursInd[j] = population.members[j++]);
-        let meilleurs = new util.Population(meilleursInd, population.func);
+        let meilleurs = new Population(meilleursInd, population.func);
 
         let nbChildren = nbInd - nbMeilleurs;
         console.log("m enfants : ",nbChildren);
