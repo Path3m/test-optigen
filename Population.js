@@ -6,6 +6,8 @@ export class Population{
         this.members = members;
         this.length  = members.length;
         this.func    = func;
+
+        this.orderedByScore = false;
     }
 
     /**
@@ -28,9 +30,9 @@ export class Population{
     }
 
     /**
-     * 
-     * @param {*} population 
-     * @param {*} percentMut 
+     * Mutate a percentage of individuals from the population
+     * @param {*} percentMut
+     * @return a reference to this population
      */
     mutatePop(percentMut){
         let numberToMutate = Math.floor(this.length * percentMut);
@@ -40,36 +42,60 @@ export class Population{
 
         for(let i=0; i<numberToMutate; i++){
             while(index in alreadyMutated) index = Math.floor(Math.random() * this.length);
-
-            console.log("l'enfant ",index," est muté.");
-
             this.members[index].mutation();
             alreadyMutated[index] = i;
         }
         console.log(alreadyMutated);
+
+        this.orderedByScore = false;
+        return this;
     }
 
-    //----------------------------------------------------------------------
+    /**
+     * Perform crossover between two individuals randomly chosen
+     * in among the best scoring individuals
+     * @param {*} parentRange 
+     * @returns an array of two new individual
+     */
+    crossover(parentRange){
+        if(!this.orderedByScore) this.sortByScore();
+
+        let pair = Permutation.indexPair(parentRange);
+        
+        let parent1  = this.members[pair[0]];
+        let parent2  = this.members[pair[1]];
+        return parent1.crossover(parent2);
+    }
+
     /**
      * Perfom PMXCrossover on a population of several individuals
      * @param {*} pop 
      */
-    newGeneration(crossPercent, sizeNewGen) { //TODO : chose a better name
-    
-        let nbParents = Math.floor(this.length * crossPercent);
+    newGeneration(crossPercent, sizeNewGen) {
+        let evenSize   = (sizeNewGen % 2 == 0)? sizeNewGen : sizeNewGen - 1;
+        let nbParents  = Math.floor(this.length * crossPercent);
         let newMembers = new Array(sizeNewGen);
     
-        for (let i = 0; i < newMembers.length; i++) {
-          let pair = Permutation.indexPair(nbParents);
-        
-          let parent1  = this.members[pair[0]];
-          let parent2  = this.members[pair[1]];
-          let children = parent1.crossover(parent2);
-          newMembers[i]   = children[0];
-          if(i < newMembers.length-1) newMembers[++i] = children[1]; //TODO : find a better solution
+        for (let i = 0; i < evenSize;) {
+          let children = this.crossover(nbParents);
+          newMembers[i++] = children[0];
+          newMembers[i++] = children[1]; //TODO : find a better solution
         }
+
+        if(evenSize !== sizeNewGen)
+            newMembers[sizeNewGen - 1] = (this.crossover(nbParents))[0];
     
         return new Population(newMembers, this.func);
+    }
+
+    /**
+     * 
+     * @param {*} nbMeilleurs 
+     * @returns 
+     */
+    selectMeilleurs(nbMeilleurs){
+        if(!this.orderedByScore) this.sortByScore();
+        return new Population( this.members.slice(0, nbMeilleurs), this.func );
     }
 
     /**
@@ -78,10 +104,11 @@ export class Population{
      * @param {Population} population
      * @return a reference to the current poopulation
      */
-    concat(population){
+    push(population){
         if(this.func.toString() != population.func.toString()) throw new Error("Can't add two different population.");
         this.members.push(...population.members);
         this.length += population.length;
+        this.orderedByScore = false;
         return this;
     }
 
@@ -92,6 +119,7 @@ export class Population{
      */
     sort(method){
         this.members.sort((ind1, ind2) => method(ind1, ind2));
+        this.orderedByScore = false;
         return this;
     }
 
@@ -102,6 +130,7 @@ export class Population{
      */
     sortByScore(){
         this.members.sort((i1,i2) => -(i1.score - i2.score));
+        this.orderedByScore = true;
         return this;
     }
 
