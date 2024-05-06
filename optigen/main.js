@@ -15,5 +15,4 @@ let popfin = optigen(util.score, dimensions, influences);
 console.log("\nPopulation Finale :");
 popfin.poplog();
 
-
 console.log("on termine là ***************************************************");
