@@ -52,6 +52,20 @@ export class Permutation{
     }
 
     /**
+     * Shift the element of an array toward left, the array
+     * is copied
+     * @param {*} array 
+     * @param {*} count 
+     * @returns a new shifted array
+     */
+    static toShiftLeft(array, count){
+        let mod     = count % array.length;
+        let shifted = array.slice(mod);
+        for(let i=0; i<mod; shifted.push(array[i++]));
+        return shifted;
+    }
+
+    /**
      * Randomly choose two indicies in an array and swap the values
      * @return a reference to the current permutation
      */
