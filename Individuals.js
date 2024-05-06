@@ -58,13 +58,26 @@ export class Individual{
     }
 
     /**
-     * Execute a mutation over an individual that is a permutation 
+     * Execute a mutation over an individual
+     * @return the name of the mutation applied
      */
     mutation(){
         let factor = Math.random();
+        let name = "";
 
-        if (factor < 0.9) Permutation.randSwap(this.genome);
-        else Permutation.randSwap(this.genome);
+        if (factor < 0.9) {
+            Permutation.randSwap(this.genome);
+            name = Permutation.randSwap.name;
+        }else{
+            this.genome = Permutation.toShiftLeft(
+                this.genome, 
+                Math.floor(Math.random() * this.genome.length / 2)+1
+            );
+            name = Permutation.toShiftLeft.name;
+        }
+
+        this.score = this.func(this.genome);
+        return name;
     }
 
 
