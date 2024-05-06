@@ -45,7 +45,6 @@ export class Population{
             this.members[index].mutation();
             alreadyMutated[index] = i;
         }
-        console.log(alreadyMutated);
 
         this.orderedByScore = false;
         return this;
@@ -143,6 +142,6 @@ export class Population{
         return ( function(members, array){
             members.forEach(current => array.push(current.score));
             return array;
-        })(this.members, []);
+        })(this.members, new Array());
     }
 }
