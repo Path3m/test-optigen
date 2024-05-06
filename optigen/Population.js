@@ -134,4 +134,15 @@ export class Population{
         return this;
     }
 
+    /**
+     * @returns an array containing all score in the current population, ordered descending
+     */
+    score(){
+        if(!this.orderedByScore) this.sortByScore();
+        
+        return ( function(members, array){
+            members.forEach(current => array.push(current.score));
+            return array;
+        })(this.members, []);
+    }
 }
