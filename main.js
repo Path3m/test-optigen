@@ -1,4 +1,3 @@
-import * as pmx from "./Crossover/celaus_user_modified/pmx_modified.js";
 import * as util from "./utilgen.js";
 import { optigen } from "./algogen.js";
 
@@ -15,6 +14,5 @@ let influences = {reproduction: 0.6, mutation: 0.4, selection: 0.4};
 let popfin = optigen(util.score, dimensions, influences);
 console.log("\nPopulation Finale :");
 popfin.poplog();
-
 
 console.log("on termine là ***************************************************");
