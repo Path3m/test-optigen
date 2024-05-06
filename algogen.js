@@ -1,5 +1,3 @@
-import * as util from "./utilgen.js";
-
 import { Permutation } from "./Permutation.js";
 import { Individual } from "./Individuals.js";
 import { Population } from "./Population.js";
